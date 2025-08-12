@@ -1,7 +1,34 @@
+use core::panic;
+
 struct Ticket {
     title: String,
     description: String,
     status: String,
+}
+
+#[derive(PartialEq, Debug)]
+enum TicketStatus {
+    ToDo,
+    InProgress,
+    Done,
+}
+impl TicketStatus {
+    fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "To-Do" => Some(Self::ToDo),
+            "In Progress" => Some(Self::InProgress),
+            "Done" => Some(Self::Done),
+            _ => None,
+        }
+    }
+
+    fn to_string(&self) -> String {
+        match &self {
+            TicketStatus::ToDo => String::from("To-Do"),
+            TicketStatus::InProgress => String::from("In Progress"),
+            TicketStatus::Done => String::from("Done"),
+        }
+    }
 }
 
 impl Ticket {
@@ -18,7 +45,28 @@ impl Ticket {
     // as well as some `String` methods. Use the documentation of Rust's standard library
     // to find the most appropriate options -> https://doc.rust-lang.org/std/string/struct.String.html
     fn new(title: String, description: String, status: String) -> Self {
-        todo!();
+        let status = TicketStatus::from_str(&status);
+        let status = match status {
+            Some(s) => s.to_string(),
+            None => panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed"),
+        };
+
+        if title.is_empty() {
+            panic!("Title cannot be empty");
+        }
+
+        if description.is_empty() {
+            panic!("Description cannot be empty");
+        }
+
+        if title.bytes().len() > 50 {
+            panic!("Title cannot be longer than 50 bytes");
+        }
+
+        if description.bytes().len() > 500 {
+            panic!("Description cannot be longer than 500 bytes");
+        }
+
         Self {
             title,
             description,
