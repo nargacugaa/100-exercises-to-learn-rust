@@ -10,6 +10,33 @@ pub struct Ticket {
 }
 
 impl Ticket {
+    fn check_input(title: Option<&String>, description: Option<&String>, status: Option<&String>) {
+        if let Some(t) = title {
+            if t.is_empty() {
+                panic!("Title cannot be empty");
+            }
+
+            if t.len() > 50 {
+                panic!("Title cannot be longer than 50 bytes");
+            }
+        }
+
+        if let Some(d) = description {
+            if d.is_empty() {
+                panic!("Description cannot be empty");
+            }
+            if d.len() > 500 {
+                panic!("Description cannot be longer than 500 bytes");
+            }
+        }
+
+        if let Some(s) = status {
+            if s != "To-Do" && s != "In Progress" && s != "Done" {
+                panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+            }
+        }
+    }
+
     pub fn new(title: String, description: String, status: String) -> Ticket {
         if title.is_empty() {
             panic!("Title cannot be empty");
@@ -44,6 +71,19 @@ impl Ticket {
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+    pub fn set_title(&mut self, title: String) {
+        Ticket::check_input(Some(&title), None, None);
+        self.title = title;
+    }
+    pub fn set_description(&mut self, description: String) {
+        Ticket::check_input(None, Some(&description), None);
+        self.description = description;
+    }
+    pub fn set_status(&mut self, status: String) {
+        Ticket::check_input(None, None, Some(&status));
+        self.status = status;
     }
 }
 
