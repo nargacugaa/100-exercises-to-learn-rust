@@ -31,15 +31,15 @@ impl Ticket {
         }
     }
 
-    pub fn title(&self) -> &String {
+    pub fn title(&self) -> &str {
         &self.title
     }
 
-    pub fn description(&self) -> &String {
+    pub fn description(&self) -> &str {
         &self.description
     }
 
-    pub fn status(&self) -> &String {
+    pub fn status(&self) -> &str {
         &self.status
     }
 }
@@ -49,6 +49,16 @@ mod tests {
     use super::*;
     use common::{valid_description, valid_title};
     use std::any::{Any, TypeId};
+
+    #[test]
+    fn test_size() {
+        let a = String::from("jia min");
+        let b = &a[0..1];
+
+        assert_eq!(size_of_val(&a), 24);
+        assert_eq!(size_of_val(&b), 16);
+    }
+
 
     #[test]
     fn test_type() {

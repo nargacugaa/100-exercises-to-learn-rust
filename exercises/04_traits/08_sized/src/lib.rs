@@ -3,5 +3,16 @@ pub fn example() {
     // via `std::mem::size_of` will result in a compile-time error.
     //
     // TODO: Comment out the following line and move on to the next exercise.
-    std::mem::size_of::<str>();
+    // std::mem::size_of::<str>();
+
+    println!("size of String {}", std::mem::size_of::<String>());
+    println!("size of &str {}", std::mem::size_of::<&str>());
 }
+
+mod tests {
+    #[test]
+    fn test_size() {
+        crate::example();
+    }
+}
+
