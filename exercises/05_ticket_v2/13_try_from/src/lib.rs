@@ -41,6 +41,16 @@ impl TryFrom<&str> for Status {
 mod tests {
     use super::*;
     use std::convert::TryFrom;
+    
+    #[test]
+    #[should_panic(expected = "hello is not a valid status")]
+    fn test_try_from_bad_status_string() {
+        let status_result = Status::try_from("hello".to_string());
+        let _ = match status_result {
+            Ok(status) => status,
+            Err(err) => panic!("{err}"),
+        };
+    }
 
     #[test]
     fn test_try_from_string() {
