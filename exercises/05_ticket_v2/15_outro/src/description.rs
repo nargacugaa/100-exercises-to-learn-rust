@@ -5,6 +5,15 @@
 #[derive(Debug, PartialEq, Clone)]
 pub struct TicketDescription(String);
 
+#[derive(Debug, thiserror::Error)]
+pub enum TicketDescriptionError {
+    #[error("The description cannot be empty")]
+    IsEmpty,
+    #[error("The description cannot be longer than 500 bytes")]
+    TooLang,
+}
+
+
 impl TryFrom<&str> for TicketDescription {
     type Error = String;
 
