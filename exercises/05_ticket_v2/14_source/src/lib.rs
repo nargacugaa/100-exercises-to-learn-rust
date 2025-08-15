@@ -1,4 +1,5 @@
-use crate::status::Status;
+use crate::status::{ParseStatusError, Status};
+use std::{error::Error, fmt::{self, Display, Formatter}};
 
 // We've seen how to declare modules in one of the earliest exercises, but
 // we haven't seen how to extract them into separate files.
@@ -13,17 +14,38 @@ mod status;
 // TODO: Add a new error variant to `TicketNewError` for when the status string is invalid.
 //   When calling `source` on an error of that variant, it should return a `ParseStatusError` rather than `None`.
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug)]
 pub enum TicketNewError {
-    #[error("Title cannot be empty")]
     TitleCannotBeEmpty,
-    #[error("Title cannot be longer than 50 bytes")]
     TitleTooLong,
-    #[error("Description cannot be empty")]
     DescriptionCannotBeEmpty,
-    #[error("Description cannot be longer than 500 bytes")]
     DescriptionTooLong,
+    InvalidStatus(ParseStatusError),
 }
+
+impl Display for TicketNewError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        match self {
+            TicketNewError::TitleCannotBeEmpty => write!(f, "{}", "Title cannot be empty"),
+            TicketNewError::TitleTooLong => write!(f, "{}", "Title cannot be longer than 50 bytes"),
+            TicketNewError::DescriptionCannotBeEmpty => write!(f, "{}", "Description cannot be empty"),
+            TicketNewError::DescriptionTooLong => write!(f, "{}", "Description cannot be longer than 500 bytes"),
+            TicketNewError::InvalidStatus(parse_status_error) => {
+                write!(f, "{}", parse_status_error)
+            }
+        }
+    }
+}
+
+impl Error for TicketNewError  {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            TicketNewError::InvalidStatus(e) => Some(e),
+            _ => None
+        }
+    }
+}
+
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Ticket {
@@ -47,7 +69,10 @@ impl Ticket {
             return Err(TicketNewError::DescriptionTooLong);
         }
 
-        // TODO: Parse the status string into a `Status` enum.
+        let status = match status.try_into() {
+            Ok(s) => s,
+            Err(error) => return Err(TicketNewError::InvalidStatus(error)),
+        };
 
         Ok(Ticket {
             title,
