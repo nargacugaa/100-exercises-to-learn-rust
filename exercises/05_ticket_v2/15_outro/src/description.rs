@@ -8,35 +8,39 @@ pub struct TicketDescription(String);
 #[derive(Debug, thiserror::Error)]
 pub enum TicketDescriptionError {
     #[error("The description cannot be empty")]
-    IsEmpty,
+    Empty,
     #[error("The description cannot be longer than 500 bytes")]
-    TooLang,
+    TooLong,
 }
 
 
 impl TryFrom<&str> for TicketDescription {
-    type Error = String;
+    type Error = TicketDescriptionError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
-        if value.is_empty() {
-            return Err("The description cannot be empty".into());
-        } else if value.len() > 500 {
-            return Err("The description cannot be longer than 500 bytes".into());
-        } else {
-            Ok(TicketDescription(value.into()))
-        }
+        validate(value)?;
+        Ok(Self(value.to_string()))
     }
 }
 
 impl TryFrom<String> for TicketDescription {
-    type Error = String;
+    type Error = TicketDescriptionError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         value.as_str().try_into()
     }
 }
 
-
+/// 验证输入的 description 是否合法
+fn validate(description: &str) -> Result<(), TicketDescriptionError> {
+    if description.is_empty() {
+        Err(TicketDescriptionError::Empty)
+    } else if description.len() > 500 {
+        Err(TicketDescriptionError::TooLong)
+    } else {
+        Ok(())
+    }
+}
 
 #[cfg(test)]
 mod tests {
