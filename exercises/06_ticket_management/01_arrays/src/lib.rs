@@ -2,8 +2,15 @@
 
 pub struct WeekTemperatures {
     // TODO
+    daily_temperature_readings: [DayTemperature; 7],
 }
 
+struct DayTemperature {
+    day: Weekday,
+    temperature: Option<i32>,
+}
+
+#[derive(Debug,PartialEq)]
 pub enum Weekday {
     Monday,
     Tuesday,
@@ -16,15 +23,55 @@ pub enum Weekday {
 
 impl WeekTemperatures {
     pub fn new() -> Self {
-        todo!()
+        Self {
+            daily_temperature_readings: [
+                DayTemperature {
+                    day: Weekday::Sunday,
+                    temperature: None,
+                },
+                DayTemperature {
+                    day: Weekday::Monday,
+                    temperature: None,
+                },
+                DayTemperature {
+                    day: Weekday::Tuesday,
+                    temperature: None,
+                },
+                DayTemperature {
+                    day: Weekday::Wednesday,
+                    temperature: None,
+                },
+                DayTemperature {
+                    day: Weekday::Thursday,
+                    temperature: None,
+                },
+                DayTemperature {
+                    day: Weekday::Friday,
+                    temperature: None,
+                },
+                DayTemperature {
+                    day: Weekday::Saturday,
+                    temperature: None,
+                },
+            ],
+        }
     }
 
     pub fn get_temperature(&self, day: Weekday) -> Option<i32> {
-        todo!()
+        for item in self.daily_temperature_readings.iter() {
+            if item.day.eq(&day) {
+               return item.temperature;
+            }
+        }
+        None
     }
 
     pub fn set_temperature(&mut self, day: Weekday, temperature: i32) {
-        todo!()
+        for item in  &mut self.daily_temperature_readings {
+            if item.day.eq(&day) {
+                item.temperature = Some(temperature)
+            }
+        }
     }
 }
 
